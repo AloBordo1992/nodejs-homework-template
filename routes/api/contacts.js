@@ -1,25 +1,22 @@
-const express = require('express')
+import express from 'express'
+import contactsController from "../../controllers/contacts-controller.js";
+import { isEmptyBody, contactValidateFavorite, contactValidateAll, isValidId, authenticate } from '../../middlewares/index.js';
 
-const router = express.Router()
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const contactsRouter = express.Router()
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+contactsRouter.use(authenticate);
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+contactsRouter.get('/', contactsController.getAll);
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+contactsRouter.get('/:id', isValidId, contactsController.getById);
 
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+contactsRouter.post('/', isEmptyBody, contactValidateAll, contactsController.add);
 
-module.exports = router
+contactsRouter.delete('/:id', isValidId, contactsController.deleteById);
+
+contactsRouter.put('/:id', isValidId, isEmptyBody, contactValidateAll, contactsController.updateById);
+
+contactsRouter.patch('/:contactId/favorite', isValidId, isEmptyBody, contactValidateFavorite, contactsController.updateStatusContact);
+
+export default contactsRouter;
